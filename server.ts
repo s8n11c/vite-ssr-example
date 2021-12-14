@@ -1,7 +1,6 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import { serverRenderRoute } from "./ssr/helpers/serverRenderRoute";
-import { getServerSideProps } from "./ssr/helpers/getServerSideProps";
 
 async function createServer() {
   const app = express();
@@ -13,8 +12,6 @@ async function createServer() {
   app.use(vite.middlewares);
 
   app.use(express.static("public"));
-
-  app.use("/data/*", getServerSideProps({ vite }));
 
   app.use("*", serverRenderRoute({ vite }));
 

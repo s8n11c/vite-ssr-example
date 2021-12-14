@@ -1,10 +1,8 @@
-import reactRefresh from "@vitejs/plugin-react-refresh";
+const vuePlugin = require("@vitejs/plugin-vue");
 
 export default {
-  plugins: [reactRefresh()],
-  esbuild: {
-    jsxInject: `import React from 'react';`,
-  },
+  plugins: [vuePlugin()],
+  esbuild: {},
   build: {
     minify: false,
   },

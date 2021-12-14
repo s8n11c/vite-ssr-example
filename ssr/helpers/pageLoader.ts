@@ -1,26 +1,13 @@
 import fs from "fs";
 import path from "path";
 import { ViteDevServer } from "vite";
-import { urlToFilePath } from "./urlToFilePath";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
 
 type Props = {
   url: string;
   vite: ViteDevServer;
 };
 
-type PageLoaderResult = {
-  template: string;
-  Page: any;
-  App: any;
-  props: any;
-};
-
-export const pageLoader = async ({
-  url,
-  vite,
-}: Props): Promise<PageLoaderResult> => {
+export const pageLoader = async ({ url, vite }: Props): Promise<any> => {
   // 1. Read index.html
   let template = fs.readFileSync(
     path.resolve(process.cwd(), "index.html"),
@@ -35,13 +22,7 @@ export const pageLoader = async ({
   //    your ESM source code to be usable in Node.js! There is no bundling
   //    required, and provides efficient invalidation similar to HMR.
 
-  const [{ default: Page, getServerSideProps }, { App }] = await Promise.all([
-    vite.ssrLoadModule(`/src/pages${urlToFilePath(url)}`),
-    vite.ssrLoadModule(`/ssr/entry.tsx`),
-  ]);
+  const render = (await vite.ssrLoadModule("/ssr/entry.ts")).render;
 
-  let props = {};
-  if (getServerSideProps) props = await getServerSideProps({ prisma });
-
-  return { template, Page, props, App };
+  return { template, render };
 };
